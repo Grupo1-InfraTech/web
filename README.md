@@ -11,19 +11,25 @@ Software necesarios:
 - Docker 28.0.4
 
 Instrucciones de ejecución del "frontend" en git
+
 1.- Asegurar de tener github en pc 
+
 2.- Configurar git por primera vez:
+    
     git config --global user.namer "nombre"
     git config --global user.email "@correo.uss.cl"
 3.- Se ejecuta solo una vez y es para los terceros
+    
     git clone <url-del-repositorio>.git
     cd <nombre-de-la-carpeta-del-proyecto>
 4.- Ir a la carpeta del poyecto
 
     cd solemne2
 5.- Antes de empezar, realizar sincronizacion
+    
     git pull origin main
 6.- Recomendación: Antes usa "git status" para ver si se modificó algo
+    
     git status
 7.- Ir a carpeta frontend
 
@@ -38,6 +44,7 @@ Instrucciones de ejecución del "frontend" en git
 10.- Subir los cambios al repositorio remoto (recuerden estar en la rama main):
 
     git push origin main 
+
 Instrucciones de usos Angular en terceros
 
 1.- Instalar Node.js y Angular CLI y ngx-charts
@@ -50,13 +57,13 @@ Instrucciones de usos Angular en terceros
     npm -v
 Sí, hay error. Abril la PowerShell como administrador y ejecuta
 
-Set-ExecutionPolicy Unrestricted
+    Set-ExecutionPolicy Unrestricted
 3.- Instalar dependencias de Angular
 
     npm install
 4.- Iniciar servidor
 
-Modo de desarrollo: ng serve 
-Acceso desde cualquier dispositivo: ng serve --host 0.0.0.0
+    Modo de desarrollo: ng serve 
+    Acceso desde cualquier dispositivo: ng serve --host 0.0.0.0
 
 Instrucciones para ejecutar Docker
