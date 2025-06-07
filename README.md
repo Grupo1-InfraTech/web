@@ -47,10 +47,11 @@ Instrucciones de ejecución del "frontend" en git
 
 Instrucciones de usos Angular en terceros
 
-1.- Instalar Angular CLI y ngx-charts
+1.- Instalar Angular CLI, ngx-charts y jspdf
 
     npm install -g @angular/cli
     npm install @swimlane/ngx-charts
+    npm install jspdf
 2.- Comprobar instalaciones
 
     node -v
