@@ -1,1 +1,62 @@
-<p>incident-detail works!</p>
+<div class="incident-detail">
+  <h2>Detalle del Incidente</h2>
+
+  <!-- Selector de incidente por ID -->
+  <div class="incident-selector">
+    <label for="incidentSelect">Selecciona un incidente:</label>
+    <select id="incidentSelect" [(ngModel)]="incident" [ngModelOptions]="{standalone: true}">
+      <option *ngFor="let inc of incidents" [ngValue]="inc">
+        #{{ inc.id }} - {{ inc.title }}
+      </option>
+    </select>
+  </div>
+
+  <div class="incident-info" *ngIf="incident">
+    <p><strong>ID:</strong> #{{ incident.id }}</p>
+    <p><strong>Título:</strong> {{ incident.title }}</p>
+    <p><strong>Descripción:</strong> {{ incident.description }}</p>
+    <p><strong>Categoría:</strong> {{ incident.category }}</p>
+    <p><strong>Prioridad:</strong> {{ incident.priority }}</p>
+    <p><strong>Fecha de creación:</strong> {{ incident.createdAt | date:'dd/MM/yyyy HH:mm':'':'es' }}</p>
+    <p><strong>Apertura:</strong> {{ incident.openingTime ? (incident.openingTime | date:'dd/MM/yyyy HH:mm':'':'es') : 'No especificado' }}</p>
+    <p><strong>Cierre:</strong> {{ incident.closingTime ? (incident.closingTime | date:'dd/MM/yyyy HH:mm':'':'es') : 'No cerrado' }}</p>
+  </div>
+
+  <div class="incident-actions" *ngIf="incident">
+    <label for="assignedTo">Asignar técnico:</label>
+    <select id="assignedTo" [(ngModel)]="incident.assignedTo">
+      <option value="">Sin asignar</option>
+      <option *ngFor="let technician of technicians" [value]="technician">{{ technician }}</option>
+    </select>
+
+    <label for="status">Estado del incidente:</label>
+    <select id="status" [(ngModel)]="incident.status">
+      <option value="Abierto">Abierto</option>
+      <option value="En progreso">En progreso</option>
+      <option value="Cerrado">Cerrado</option>
+    </select>
+
+    <label for="priority">Prioridad:</label>
+    <select id="priority" [(ngModel)]="incident.priority">
+      <option value="Baja">Baja</option>
+      <option value="Media">Media</option>
+      <option value="Alta">Alta</option>
+    </select>
+  </div>
+
+  <!-- Notas de resolución con textarea estático -->
+  <div class="incident-info incident-notes" *ngIf="incident" >
+    <label for="resolution"><strong>Comentario:</strong></label>
+    <textarea id="resolution"
+              [(ngModel)]="incident.resolution"
+              rows="6"
+              class="static-textarea"
+              placeholder="Escriba un comentario...."></textarea>
+  </div>
+
+  <div class="action-buttons">
+    <button (click)="saveChanges()" class="save-btn">Guardar Cambios</button>
+    <button (click)="generateReport()" class="report-btn">Generar Informe PDF</button>
+    <button (click)="goBack()" class="back-btn">Volver</button>
+  </div>
+</div>
