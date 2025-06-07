@@ -69,9 +69,11 @@ Sí, hay error. Abril la PowerShell como administrador y ejecuta
     Acceso desde cualquier dispositivo: ng serve --host 0.0.0.0
 
 Instrucciones para ejecutar Docker para terceros
+
 1.- tener docker desktop instalado 
 
 2.- Hacer estos pasos:
+    
     git clone https://github.com/Grupo1-InfraTech/web.git
     cd <carpeta_del_proyecto>
     docker build -t frontend .
