@@ -45,7 +45,7 @@ Instrucciones de ejecución del "frontend" en git
 
     git push origin main 
 
-Instrucciones de usos Angular en terceros
+Instrucciones de usos Angular para terceros
 
 1.- Instalar Angular CLI, ngx-charts, jspdf y chart.js
 
@@ -68,4 +68,12 @@ Sí, hay error. Abril la PowerShell como administrador y ejecuta
     Modo de desarrollo: ng serve 
     Acceso desde cualquier dispositivo: ng serve --host 0.0.0.0
 
-Instrucciones para ejecutar Docker
+Instrucciones para ejecutar Docker para terceros
+1.- tener docker desktop instalado 
+
+2.- Hacer estos pasos:
+    git clone https://github.com/Grupo1-InfraTech/web.git
+    cd <carpeta_del_proyecto>
+    docker build -t frontend .
+    docker run -p 4200:4200 frontend
+    Luego ir al navegador: http://localhost:4200
