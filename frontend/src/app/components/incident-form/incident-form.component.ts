@@ -1,16 +1,9 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-type Prioridad = 'Alta' | 'Media' | 'Baja' | '';
-
-interface Incident {
-  createdAt: string;
-  category: string;
-  prioridad: Prioridad;
-  title: string;
-  descripcion: string;
-}
+import { Router } from '@angular/router';
+import { IncidentService } from '../../services/incident.service';
+import { Incident } from '../../models/incident.model';
 
 @Component({
   selector: 'app-incident-form',
@@ -21,16 +14,43 @@ interface Incident {
 })
 export class IncidentFormComponent {
   incident: Incident = {
-    createdAt: '',
+    id: 0,
+    createdAt: new Date(),
     category: '',
-    prioridad: '', 
+    priority: '', 
     title: '',
-    descripcion: '',
+    description: '',
+    openingTime: null,
+    closingTime: null,
+    assignedTo: null,
+    status: 'Abierto',
+    resolution: null
   };
 
   fechaOpcion: string = '';
   fechaManual: string = '';
   fechaActual: string = '';
+  isSubmitting: boolean = false;
+  connectionStatus: string = 'Verificando conexión...';
+
+  constructor(
+    private incidentService: IncidentService,
+    private router: Router
+  ) {
+    this.checkConnection();
+  }
+
+  checkConnection(): void {
+    this.incidentService.getIncidents().subscribe({
+      next: () => {
+        this.connectionStatus = '✅ Conectado al servidor';
+      },
+      error: (error) => {
+        console.error('Error de conexión:', error);
+        this.connectionStatus = '❌ Sin conexión al servidor';
+      }
+    });
+  }
 
   onFechaOpcionChange() {
     if (this.fechaOpcion === 'automatica') {
@@ -39,29 +59,54 @@ export class IncidentFormComponent {
   }
 
   onSubmit() {
+    if (this.isSubmitting) return;
+    
+    this.isSubmitting = true;
+    
     // Establecer la fecha según la opción seleccionada
     if (this.fechaOpcion === 'automatica') {
-      this.incident.createdAt = new Date().toISOString();
+      this.incident.createdAt = new Date();
     } else if (this.fechaOpcion === 'manual' && this.fechaManual) {
-      this.incident.createdAt = new Date(this.fechaManual).toISOString();
+      this.incident.createdAt = new Date(this.fechaManual);
     }
     
-    console.log('Incidente enviado:', this.incident);
+    console.log('Enviando incidente:', this.incident);
     
-    const fechaEnvio = new Date().toLocaleString('es-ES');
-    if (this.fechaOpcion === 'automatica') {
-      alert(`Incidente enviado automáticamente el ${fechaEnvio}`);
-    } else {
-      alert(`Incidente enviado el ${fechaEnvio} con fecha de incidente: ${new Date(this.fechaManual).toLocaleDateString('es-ES')}`);
-    }
+    // Enviar al backend
+    this.incidentService.addIncident(this.incident).subscribe({
+      next: (response) => {
+        console.log('Incidente creado exitosamente:', response);
+        const fechaEnvio = new Date().toLocaleString('es-ES');
+        alert(`✅ Incidente enviado exitosamente el ${fechaEnvio}`);
+        
+        // Restablecer el formulario
+        this.resetForm();
+        this.isSubmitting = false;
+        
+        // Opcional: redirigir a la lista de incidentes
+        // this.router.navigate(['/Lista-Incidente']);
+      },
+      error: (error) => {
+        console.error('Error al enviar incidente:', error);
+        alert('❌ Error al enviar el incidente. Verifique la conexión.');
+        this.isSubmitting = false;
+      }
+    });
+  }
 
-    // Restablecer el formulario
+  resetForm(): void {
     this.incident = {
-      createdAt: '',
+      id: 0,
+      createdAt: new Date(),
       category: '',
-      prioridad: '',
+      priority: '', 
       title: '',
-      descripcion: '',
+      description: '',
+      openingTime: null,
+      closingTime: null,
+      assignedTo: null,
+      status: 'Abierto',
+      resolution: null
     };
     this.fechaOpcion = '';
     this.fechaManual = '';

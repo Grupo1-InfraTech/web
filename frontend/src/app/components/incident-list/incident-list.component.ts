@@ -35,10 +35,12 @@ export class IncidentListComponent implements OnInit {
     this.loadIncidents();
   }
 
-  loadIncidents(): void {
-    this.incidents = this.incidentService.getIncidents();
+loadIncidents(): void {
+  this.incidentService.getIncidents().subscribe((data: Incident[]) => {
+    this.incidents = data;
     this.applyFilters();
-  }
+  });
+}
 
   sortIncidents() {
     if (this.sortOrder === 'priority') {

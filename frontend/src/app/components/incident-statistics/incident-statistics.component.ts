@@ -10,7 +10,6 @@ import { Incident } from '../../models/incident.model';
 })
 export class IncidentStatisticsComponent implements OnInit {
   
-  // Propiedades para el dashboard en el orden correcto
   totalIncidents: number = 0;
   resolvedIncidents: number = 0;
   openIncidents: number = 0;
@@ -20,47 +19,27 @@ export class IncidentStatisticsComponent implements OnInit {
 
   ngOnInit(): void {
     this.calculateDashboardStats();
-    
-    // Esperar a que el DOM esté completamente renderizado
-    setTimeout(() => {
-      this.renderCategoryChart();
-      this.renderMonthlyChart();
-      this.renderResolutionStatusChart();
-    }, 100);
   }
 
-  calculateDashboardStats() {
-    const incidents = this.incidentService.getIncidents();
-    
-    // Total de incidentes
-    this.totalIncidents = incidents.length;
-    
-    // Incidentes resueltos (estado "Cerrado")
-    this.resolvedIncidents = incidents.filter(incident => 
-      incident.status === 'Cerrado'
-    ).length;
-    
-    // Incidentes abiertos (estado "Abierto")
-    this.openIncidents = incidents.filter(incident => 
-      incident.status === 'Abierto'
-    ).length;
-    
-    // Incidentes en progreso (estado "En progreso")
-    this.inProgressIncidents = incidents.filter(incident => 
-      incident.status === 'En progreso'
-    ).length;
+  calculateDashboardStats(): void {
+    this.incidentService.getIncidents().subscribe((incidents: Incident[]) => {
+      this.totalIncidents = incidents.length;
+      this.resolvedIncidents = incidents.filter(i => i.status === 'Cerrado').length;
+      this.openIncidents = incidents.filter(i => i.status === 'Abierto').length;
+      this.inProgressIncidents = incidents.filter(i => i.status === 'En progreso').length;
+
+      this.renderCategoryChart(incidents);
+      this.renderMonthlyChart(incidents);
+      this.renderResolutionStatusChart(incidents);
+    });
   }
 
-  renderCategoryChart() {
+  renderCategoryChart(incidents: Incident[]) {
     const categoryCanvas = document.getElementById('categoryChart') as HTMLCanvasElement;
-    if (!categoryCanvas) {
-      console.error('Canvas categoryChart no encontrado');
-      return;
-    }
+    if (!categoryCanvas) return;
 
-    const incidents = this.incidentService.getIncidents();
     const categoryStats = this.getCategoryStatistics(incidents);
-    
+
     new Chart(categoryCanvas, {
       type: 'doughnut',
       data: {
@@ -68,13 +47,7 @@ export class IncidentStatisticsComponent implements OnInit {
         datasets: [
           {
             data: Object.values(categoryStats),
-            backgroundColor: [
-              '#FF6384', // Hardware - Rosa
-              '#36A2EB', // Software - Azul
-              '#FFCE56', // Red - Amarillo
-              '#4BC0C0', // Otros - Verde agua
-              '#FF9F40'  // Adicional - Naranja
-            ],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40'],
             borderWidth: 2,
             borderColor: '#ffffff'
           }
@@ -87,33 +60,23 @@ export class IncidentStatisticsComponent implements OnInit {
           title: {
             display: true,
             text: 'Distribución por Categoría',
-            font: {
-              size: 16,
-              weight: 'bold'
-            }
+            font: { size: 16, weight: 'bold' }
           },
           legend: {
             position: 'bottom',
-            labels: {
-              padding: 15,
-              usePointStyle: true
-            }
+            labels: { padding: 15, usePointStyle: true }
           }
         }
       }
     });
   }
 
-  renderMonthlyChart() {
+  renderMonthlyChart(incidents: Incident[]) {
     const monthlyCanvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
-    if (!monthlyCanvas) {
-      console.error('Canvas monthlyChart no encontrado');
-      return;
-    }
+    if (!monthlyCanvas) return;
 
-    const incidents = this.incidentService.getIncidents();
     const monthlyStats = this.getMonthlyStatistics(incidents);
-    
+
     new Chart(monthlyCanvas, {
       type: 'bar',
       data: {
@@ -136,45 +99,30 @@ export class IncidentStatisticsComponent implements OnInit {
           title: {
             display: true,
             text: 'Incidentes por Mes',
-            font: {
-              size: 16,
-              weight: 'bold'
-            }
+            font: { size: 16, weight: 'bold' }
           },
-          legend: {
-            display: false
-          }
+          legend: { display: false }
         },
         scales: {
           y: {
             beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            },
-            grid: {
-              color: '#e9ecef'
-            }
+            ticks: { stepSize: 1 },
+            grid: { color: '#e9ecef' }
           },
           x: {
-            grid: {
-              display: false
-            }
+            grid: { display: false }
           }
         }
       }
     });
   }
 
-  renderResolutionStatusChart() {
+  renderResolutionStatusChart(incidents: Incident[]) {
     const statusCanvas = document.getElementById('resolutionChart') as HTMLCanvasElement;
-    if (!statusCanvas) {
-      console.error('Canvas resolutionChart no encontrado');
-      return;
-    }
+    if (!statusCanvas) return;
 
-    const incidents = this.incidentService.getIncidents();
     const resolutionStats = this.getResolutionStatistics(incidents);
-    
+
     new Chart(statusCanvas, {
       type: 'bar',
       data: {
@@ -197,29 +145,18 @@ export class IncidentStatisticsComponent implements OnInit {
           title: {
             display: true,
             text: 'Estado de Resolución',
-            font: {
-              size: 16,
-              weight: 'bold'
-            }
+            font: { size: 16, weight: 'bold' }
           },
-          legend: {
-            display: false
-          }
+          legend: { display: false }
         },
         scales: {
           y: {
             beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            },
-            grid: {
-              color: '#e9ecef'
-            }
+            ticks: { stepSize: 1 },
+            grid: { color: '#e9ecef' }
           },
           x: {
-            grid: {
-              display: false
-            }
+            grid: { display: false }
           }
         }
       }
@@ -228,12 +165,9 @@ export class IncidentStatisticsComponent implements OnInit {
 
   private getCategoryStatistics(incidents: Incident[]): { [key: string]: number } {
     const stats: { [key: string]: number } = {};
-    
     incidents.forEach(incident => {
-      const category = incident.category;
-      stats[category] = (stats[category] || 0) + 1;
+      stats[incident.category] = (stats[incident.category] || 0) + 1;
     });
-    
     return stats;
   }
 
@@ -243,28 +177,28 @@ export class IncidentStatisticsComponent implements OnInit {
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
-    
+
     incidents.forEach(incident => {
-      const month = monthNames[incident.createdAt.getMonth()];
+      const createdAt = new Date(incident.createdAt);
+      const month = monthNames[createdAt.getMonth()];
       stats[month] = (stats[month] || 0) + 1;
     });
-    
+
     return stats;
   }
 
   private getResolutionStatistics(incidents: Incident[]): { resolved: number, unresolved: number } {
     let resolved = 0;
     let unresolved = 0;
-    
+
     incidents.forEach(incident => {
       if (incident.status === 'Cerrado') {
         resolved++;
       } else {
-        // "Abierto" y "En progreso" se consideran como no resueltos
         unresolved++;
       }
     });
-    
+
     return { resolved, unresolved };
   }
 }
