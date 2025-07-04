@@ -13,7 +13,7 @@ registerLocaleData(localeEs);
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    ...appConfig,
+    ...appConfig.providers,
     { provide: LOCALE_ID, useValue: 'es' }
   ]
 });
