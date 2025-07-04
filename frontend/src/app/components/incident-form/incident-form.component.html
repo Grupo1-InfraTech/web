@@ -1,5 +1,11 @@
 <div class="incident-form-wrapper">
   <h2>Reportar Incidente</h2>
+  
+  <!-- Estado de conexión -->
+  <div class="connection-status" [class.connected]="connectionStatus.includes('✅')" [class.disconnected]="connectionStatus.includes('❌')">
+    <p>{{ connectionStatus }}</p>
+  </div>
+  
   <form (ngSubmit)="onSubmit()" #incidentForm="ngForm" class="incident-form">
 
     <label for="fechaOpcion">Fecha del incidente:</label>
@@ -48,7 +54,7 @@
     <select
       id="prioridad"
       name="prioridad"
-      [(ngModel)]="incident.prioridad"
+      [(ngModel)]="incident.priority"
       required
     >
       <option value="" disabled>Seleccione una prioridad</option>
@@ -73,7 +79,7 @@
       name="descripcion"
       rows="5"
       placeholder="Describe el incidente con detalles..."
-      [(ngModel)]="incident.descripcion"
+      [(ngModel)]="incident.description"
       class="static-textarea"
       required
     ></textarea>
@@ -84,10 +90,11 @@
 
     <button
       type="submit"
-      [disabled]="!incidentForm.form.valid"
+      [disabled]="!incidentForm.form.valid || isSubmitting"
       class="submit-btn"
     >
-      Enviar Incidente
+      <span *ngIf="isSubmitting">Enviando...</span>
+      <span *ngIf="!isSubmitting">Enviar Incidente</span>
     </button>
   </form>
 </div>

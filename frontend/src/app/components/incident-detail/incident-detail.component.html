@@ -1,10 +1,17 @@
 <div class="incident-detail">
   <h2>Detalle del Incidente</h2>
 
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando incidentes...</p>
+  </div>
+
   <!-- Selector de incidente por ID -->
-  <div class="incident-selector">
+  <div class="incident-selector" *ngIf="!isLoading">
     <label for="incidentSelect">Selecciona un incidente:</label>
-    <select id="incidentSelect" [(ngModel)]="incident" [ngModelOptions]="{standalone: true}">
+    <select id="incidentSelect" [(ngModel)]="incident" (change)="onIncidentChange()">
+      <option [ngValue]="null">-- Selecciona un incidente --</option>
       <option *ngFor="let inc of incidents" [ngValue]="inc">
         #{{ inc.id }} - {{ inc.title }}
       </option>
@@ -55,8 +62,11 @@
   </div>
 
   <div class="action-buttons">
-    <button (click)="saveChanges()" class="save-btn">Guardar Cambios</button>
-    <button (click)="generateReport()" class="report-btn">Generar Informe PDF</button>
+    <button (click)="saveChanges()" [disabled]="isSaving" class="save-btn">
+      <span *ngIf="isSaving">Guardando...</span>
+      <span *ngIf="!isSaving">Guardar Cambios</span>
+    </button>
+    <button (click)="generateReport()" [disabled]="!incident" class="report-btn">Generar Informe PDF</button>
     <button (click)="goBack()" class="back-btn">Volver</button>
   </div>
 </div>
