@@ -16,7 +16,11 @@ Instrucciones de ejecución del "frontend" en git
 
 2.- Configurar git por primera vez:
     
+<<<<<<< HEAD
     git config --global user.name "nombre"
+=======
+    git config --global user.namer "nombre"
+>>>>>>> df0de82918747e6701377c03972c5f641593ff47
     git config --global user.email "@correo.uss.cl"
 3.- Se ejecuta solo una vez y es para los terceros
     
