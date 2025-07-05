@@ -13,9 +13,20 @@
     <select id="incidentSelect" [(ngModel)]="incident" (change)="onIncidentChange()">
       <option [ngValue]="null">-- Selecciona un incidente --</option>
       <option *ngFor="let inc of incidents" [ngValue]="inc">
-        #{{ inc.id }} - {{ inc.title }}
+        ID #{{ inc.id }} - {{ inc.title }} ({{ inc.status }})
       </option>
     </select>
+    <p class="selector-info" *ngIf="incidents.length > 0">
+      <small>
+        Mostrando {{ incidents.length }} incidentes disponibles ordenados por ID<br>
+        IDs disponibles: {{ getAvailableIds().join(', ') }}
+      </small>
+    </p>
+  </div>
+
+  <!-- Mensaje cuando no hay incidente seleccionado -->
+  <div class="no-incident-selected" *ngIf="!incident && !isLoading">
+    <p>Selecciona un incidente de la lista para ver sus detalles y asignar técnicos.</p>
   </div>
 
   <div class="incident-info" *ngIf="incident">
@@ -26,7 +37,14 @@
     <p><strong>Prioridad:</strong> {{ incident.priority }}</p>
     <p><strong>Fecha de creación:</strong> {{ incident.createdAt | date:'dd/MM/yyyy HH:mm':'':'es' }}</p>
     <p><strong>Apertura:</strong> {{ incident.openingTime ? (incident.openingTime | date:'dd/MM/yyyy HH:mm':'':'es') : 'No especificado' }}</p>
-    <p><strong>Cierre:</strong> {{ incident.closingTime ? (incident.closingTime | date:'dd/MM/yyyy HH:mm':'':'es') : 'No cerrado' }}</p>
+    <p><strong>Cierre:</strong> 
+      <span *ngIf="incident.closingTime" style="color: green; font-weight: bold;">
+        {{ incident.closingTime | date:'dd/MM/yyyy HH:mm':'':'es' }}
+      </span>
+      <span *ngIf="!incident.closingTime" style="color: orange;">
+        No cerrado
+      </span>
+    </p>
   </div>
 
   <div class="incident-actions" *ngIf="incident">
@@ -37,7 +55,7 @@
     </select>
 
     <label for="status">Estado del incidente:</label>
-    <select id="status" [(ngModel)]="incident.status">
+    <select id="status" [(ngModel)]="incident.status" (change)="onStatusChange()">
       <option value="Abierto">Abierto</option>
       <option value="En progreso">En progreso</option>
       <option value="Cerrado">Cerrado</option>

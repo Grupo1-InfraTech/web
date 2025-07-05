@@ -51,6 +51,12 @@
   box-shadow: 0 0 0 0.2rem rgba(26, 115, 232, 0.25);
 }
 
+.selector-info {
+  margin-top: 8px;
+  color: #6c757d;
+  font-style: italic;
+}
+
 /* Información del incidente */
 .incident-info {
   background-color: #ffffff;
@@ -326,6 +332,23 @@
 .action-buttons button:disabled:hover {
   background-color: #6c757d !important;
   transform: none;
+}
+
+/* Mensaje cuando no hay incidente seleccionado */
+.no-incident-selected {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 2px dashed #dee2e6;
+}
+
+.no-incident-selected p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 500;
 }
 
 /* Responsive */

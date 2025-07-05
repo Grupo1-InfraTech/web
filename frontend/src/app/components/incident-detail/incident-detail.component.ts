@@ -28,20 +28,24 @@ export class IncidentDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAllIncidents();
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!isNaN(id)) {
-      this.loadIncident(id);
-    } else {
-      alert('ID de incidente no válido');
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id && !isNaN(Number(id))) {
+      this.loadIncident(Number(id));
     }
+    // Si no hay ID, simplemente muestra el selector sin mensaje de error
   }
 
   loadAllIncidents(): void {
     this.isLoading = true;
     this.incidentService.getIncidents().subscribe({
       next: (incidents) => {
-        this.incidents = incidents;
+        // Ordenar incidentes por ID de forma ascendente
+        this.incidents = incidents.sort((a, b) => a.id - b.id);
         this.isLoading = false;
+        
+        // Debug: mostrar información sobre los IDs disponibles
+        console.log('IDs disponibles:', this.incidents.map(inc => inc.id));
+        console.log('Total de incidentes:', this.incidents.length);
       },
       error: (error) => {
         console.error('Error al cargar incidentes:', error);
@@ -50,6 +54,11 @@ export class IncidentDetailComponent implements OnInit {
         alert('Error al cargar la lista de incidentes');
       }
     });
+  }
+
+  // Método para obtener información de los IDs disponibles
+  getAvailableIds(): number[] {
+    return this.incidents.map(inc => inc.id).sort((a, b) => a - b);
   }
 
   loadIncident(id: number): void {
@@ -76,6 +85,20 @@ export class IncidentDetailComponent implements OnInit {
   onIncidentChange(): void {
     // Este método se ejecuta automáticamente cuando cambia el ngModel
     // No necesita lógica adicional ya que el binding se encarga de actualizar la variable
+  }
+
+  // Método para manejar cambios en el estado del incidente
+  onStatusChange(): void {
+    console.log('Estado cambiado a:', this.incident?.status);
+    if (this.incident && this.incident.status === 'Cerrado') {
+      // Si se marca como cerrado, establecer fecha de cierre automáticamente
+      this.incident.closingTime = new Date();
+      console.log('Fecha de cierre establecida:', this.incident.closingTime);
+    } else if (this.incident && this.incident.status !== 'Cerrado') {
+      // Si se cambia a otro estado, limpiar fecha de cierre
+      this.incident.closingTime = null;
+      console.log('Fecha de cierre limpiada');
+    }
   }
 
   saveChanges(): void {
