@@ -58,41 +58,45 @@ export class IncidentFormComponent {
     }
   }
 
-  onSubmit() {
-    if (this.isSubmitting) return;
-    
-    this.isSubmitting = true;
-    
-    // Establecer la fecha según la opción seleccionada
-    if (this.fechaOpcion === 'automatica') {
-      this.incident.createdAt = new Date();
-    } else if (this.fechaOpcion === 'manual' && this.fechaManual) {
-      this.incident.createdAt = new Date(this.fechaManual);
-    }
-    
-    console.log('Enviando incidente:', this.incident);
-    
-    // Enviar al backend
-    this.incidentService.addIncident(this.incident).subscribe({
-      next: (response) => {
-        console.log('Incidente creado exitosamente:', response);
-        const fechaEnvio = new Date().toLocaleString('es-ES');
-        alert(`✅ Incidente enviado exitosamente el ${fechaEnvio}`);
-        
-        // Restablecer el formulario
-        this.resetForm();
-        this.isSubmitting = false;
-        
-        // Opcional: redirigir a la lista de incidentes
-        // this.router.navigate(['/Lista-Incidente']);
-      },
-      error: (error) => {
-        console.error('Error al enviar incidente:', error);
-        alert('❌ Error al enviar el incidente. Verifique la conexión.');
-        this.isSubmitting = false;
-      }
-    });
+onSubmit() {
+  if (this.isSubmitting) return;
+  
+  this.isSubmitting = true;
+
+  // Establecer la fecha según la opción seleccionada
+  if (this.fechaOpcion === 'automatica') {
+    this.incident.createdAt = new Date();  // fecha y hora actual
+  } else if (this.fechaOpcion === 'manual' && this.fechaManual) {
+    const fechaSeleccionada = new Date(this.fechaManual);  // solo fecha
+    const ahora = new Date();  // fecha y hora actual
+
+    // Combinar la fecha seleccionada con la hora actual
+    fechaSeleccionada.setHours(ahora.getHours(), ahora.getMinutes(), ahora.getSeconds());
+
+    this.incident.createdAt = fechaSeleccionada;
   }
+
+  console.log('Enviando incidente:', this.incident);
+  
+  this.incidentService.addIncident(this.incident).subscribe({
+    next: (response) => {
+      console.log('Incidente creado exitosamente:', response);
+      const fechaEnvio = new Date().toLocaleString('es-ES');
+      alert(`✅ Incidente enviado exitosamente el ${fechaEnvio}`);
+      
+      this.resetForm();
+      this.isSubmitting = false;
+
+      // Opcional: redirigir a la lista de incidentes
+      // this.router.navigate(['/Lista-Incidente']);
+    },
+    error: (error) => {
+      console.error('Error al enviar incidente:', error);
+      alert('❌ Error al enviar el incidente. Verifique la conexión.');
+      this.isSubmitting = false;
+    }
+  });
+}
 
   resetForm(): void {
     this.incident = {
