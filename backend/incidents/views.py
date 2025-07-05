@@ -4,5 +4,5 @@ from .models import Incidente
 from .serializers import IncidenteSerializer
 
 class IncidenteViewSet(viewsets.ModelViewSet):
-    queryset = Incidente.objects.all().order_by('-createdAt')
+    queryset = Incidente.objects.all().order_by('-createdAt')  # Puedes cambiar el orden aquí
     serializer_class = IncidenteSerializer

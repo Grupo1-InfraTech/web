@@ -37,11 +37,14 @@ export class IncidentListComponent implements OnInit {
 
 loadIncidents(): void {
   this.incidentService.getIncidents().subscribe((data: Incident[]) => {
-    this.incidents = data;
+    // Convertir createdAt a tipo Date
+    this.incidents = data.map(inc => ({
+      ...inc,
+      createdAt: new Date(inc.createdAt)
+    }));
     this.applyFilters();
   });
 }
-
   sortIncidents() {
     if (this.sortOrder === 'priority') {
       // Ordenamiento prioritario: incidentes no resueltos +48h primero, luego por fecha

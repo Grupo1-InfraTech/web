@@ -1,12 +1,13 @@
 # incidentes/models.py
 from django.db import models
+from django.utils import timezone
 
 class Incidente(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     category = models.CharField(max_length=50)
     priority = models.CharField(max_length=20)
-    createdAt = models.DateTimeField(auto_now_add=True)
+    createdAt = models.DateTimeField(default=timezone.now)
     openingTime = models.DateTimeField(null=True, blank=True)
     closingTime = models.DateTimeField(null=True, blank=True)
     assignedTo = models.CharField(max_length=100, null=True, blank=True)
