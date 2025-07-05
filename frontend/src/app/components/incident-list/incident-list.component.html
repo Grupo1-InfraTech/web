@@ -53,8 +53,7 @@
   <!-- Lista de incidentes -->
   <div *ngIf="filteredIncidents.length > 0; else emptyList">
     <div *ngFor="let incident of filteredIncidents" class="incident-card">
-      
-      <!-- Alerta de incidente sin resolver por más de 48 horas -->
+
       <div *ngIf="isUnresolvedFor48Hours(incident)" class="unresolved-alert">
         Incidente sin resolver (más de 48 horas)
       </div>
