@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Incident } from '../../models/incident.model';
 import { IncidentService } from '../../services/incident.service';
 
@@ -15,7 +16,7 @@ import { IncidentService } from '../../services/incident.service';
   styleUrls: ['./incident-list.component.css']
 })
 export class IncidentListComponent implements OnInit {
-  sortOrder: string = 'priority';
+  sortOrder: string = 'priority'; // Valor por defecto
 
   technicians = ['Eduardo Rojas', 'Camila Campos', 'Carlos Sánchez'];
 
@@ -27,7 +28,10 @@ export class IncidentListComponent implements OnInit {
   incidents: Incident[] = [];
   filteredIncidents: Incident[] = [];
 
-  constructor(private incidentService: IncidentService) {}
+  constructor(
+    private incidentService: IncidentService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadIncidents();
@@ -38,7 +42,6 @@ export class IncidentListComponent implements OnInit {
       this.incidents = data.map(inc => ({
         ...inc,
         createdAt: new Date(inc.createdAt),
-        openingTime: inc.openingTime ? new Date(inc.openingTime) : null,
         closingTime: inc.closingTime ? new Date(inc.closingTime) : null
       }));
       this.applyFilters();
@@ -50,8 +53,13 @@ export class IncidentListComponent implements OnInit {
       this.filteredIncidents.sort((a, b) => {
         const aUnresolved48h = this.isUnresolvedFor48Hours(a);
         const bUnresolved48h = this.isUnresolvedFor48Hours(b);
-        if (aUnresolved48h && !bUnresolved48h) return -1;
-        if (!aUnresolved48h && bUnresolved48h) return 1;
+
+        if (aUnresolved48h && !bUnresolved48h) {
+          return -1;
+        }
+        if (!aUnresolved48h && bUnresolved48h) {
+          return 1;
+        }
         return b.createdAt.getTime() - a.createdAt.getTime();
       });
     } else if (this.sortOrder === 'newest') {
@@ -69,7 +77,6 @@ export class IncidentListComponent implements OnInit {
       const matchStatus = this.filterStatus ? inc.status === this.filterStatus : true;
       const matchPriority = this.filterPriority ? inc.priority === this.filterPriority : true;
       const matchDate = this.filterDate ? new Date(inc.createdAt) >= new Date(this.filterDate) : true;
-
       return matchCategory && matchStatus && matchPriority && matchDate;
     });
     this.sortIncidents();
@@ -92,9 +99,19 @@ export class IncidentListComponent implements OnInit {
 
   isUnresolvedFor48Hours(incident: Incident): boolean {
     if (incident.status === 'Cerrado') return false;
+
     const now = new Date();
     const createdAt = new Date(incident.createdAt);
     const hoursDiff = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+
     return hoursDiff > 48;
+  }
+
+  // Método para navegar a los detalles del incidente
+  goToDetails(incidentId: number): void {
+    // Establecer orden por ID antes de navegar
+    this.sortOrder = 'id';
+    this.applyFilters();
+    this.router.navigate(['/Asignar-Tecnico', incidentId]);
   }
 }

@@ -60,30 +60,49 @@
 
       <h3>{{ incident.title }}</h3>
       <p class="incident-description">{{ incident.description }}</p>
+
       <div class="incident-details">
         <strong>Tipo:</strong> {{ incident.category }}<br>
         <strong>Asignado a:</strong> {{ incident.assignedTo || 'Sin asignar' }}
       </div>
+
       <div class="incident-meta">
-        <span class="status-badge" [ngClass]="incident.status.toLowerCase().replace(' ', '-')">
+        <!-- Estado -->
+        <span [ngClass]="'status-' + incident.status.toLowerCase().replace(' ', '-')">
           Estado: {{ incident.status }}
         </span>
+
+        <!-- Prioridad -->
         <span class="priority-badge" [ngClass]="incident.priority.toLowerCase()">
           Prioridad: {{ incident.priority }}
         </span>
+
+        <!-- Fecha creación -->
         <span class="date-info">
           Fecha creación: {{ formatDateSpanish(incident.createdAt) }}
         </span>
-        <span class="opening-time" *ngIf="incident.openingTime">
-          Apertura: {{ formatDateSpanish(incident.openingTime) }}
+
+        <!-- Fecha de término (solo si está cerrado) -->
+        <span *ngIf="incident.status === 'Cerrado' && incident.closingTime" class="closing-time">
+          Fecha de término: {{ formatDateSpanish(incident.closingTime) }}
         </span>
-        <span class="closing-time" *ngIf="incident.closingTime">
-          Cierre: {{ formatDateSpanish(incident.closingTime) }}
-        </span>
+
+        <!-- Resolución -->
         <span class="resolution" *ngIf="incident.resolution">
           <strong>Resolución:</strong> {{ incident.resolution }}
         </span>
       </div>
+
+      <!-- Botones de acción -->
+      <div class="action-buttons">
+        <button (click)="goToDetails(incident.id)" class="details-btn">
+          Ver/Editar Detalles
+        </button>
+        <button (click)="goToDetails(incident.id)" class="assign-btn" *ngIf="incident.status !== 'Cerrado'">
+          Asignar Técnico
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -93,3 +112,4 @@
     </div>
   </ng-template>
 </div>
+
