@@ -76,15 +76,25 @@ export class IncidentStatisticsComponent implements OnInit {
     if (!monthlyCanvas) return;
 
     const monthlyStats = this.getMonthlyStatistics(incidents);
+    
+    // Definir el orden cronológico de los meses
+    const monthOrder = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    // Filtrar y ordenar solo los meses que tienen incidentes
+    const orderedLabels = monthOrder.filter(month => monthlyStats[month] > 0);
+    const orderedData = orderedLabels.map(month => monthlyStats[month]);
 
     new Chart(monthlyCanvas, {
       type: 'bar',
       data: {
-        labels: Object.keys(monthlyStats),
+        labels: orderedLabels,
         datasets: [
           {
             label: 'Cantidad de Incidentes',
-            data: Object.values(monthlyStats),
+            data: orderedData,
             backgroundColor: '#36A2EB',
             borderColor: '#2E8BC0',
             borderWidth: 2,
@@ -172,11 +182,13 @@ export class IncidentStatisticsComponent implements OnInit {
   }
 
   private getMonthlyStatistics(incidents: Incident[]): { [key: string]: number } {
-    const stats: { [key: string]: number } = {};
     const monthNames = [
       'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ];
+
+    // Solo contar incidentes por mes (sin inicializar con 0)
+    const stats: { [key: string]: number } = {};
 
     incidents.forEach(incident => {
       const createdAt = new Date(incident.createdAt);
