@@ -15,6 +15,7 @@ export const routes: Routes = [
   {path: '', component: DashboardComponent }, // ruta por defecto
   { path: 'Reportar-Incidente', component: IncidentFormComponent },
   { path: 'Lista-Incidente', component: IncidentListComponent },
+  { path: 'Asignar-Tecnico', component: IncidentDetailComponent },
   { path: 'Asignar-Tecnico/:id', component: IncidentDetailComponent },
   { path: 'Estadisticas', component: IncidentStatisticsComponent},
   { path: 'Login', component: LoginComponent },
