@@ -14,5 +14,11 @@ class Incidente(models.Model):
     status = models.CharField(max_length=20)
     resolution = models.TextField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Si es un nuevo incidente y no tiene openingTime, establecerlo igual a createdAt
+        if not self.pk and not self.openingTime:
+            self.openingTime = self.createdAt
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
