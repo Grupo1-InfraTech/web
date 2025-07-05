@@ -66,6 +66,7 @@ onSubmit() {
   // Establecer la fecha según la opción seleccionada
   if (this.fechaOpcion === 'automatica') {
     this.incident.createdAt = new Date();  // fecha y hora actual
+    this.incident.openingTime = new Date(); // establecer fecha de apertura igual a creación
   } else if (this.fechaOpcion === 'manual' && this.fechaManual) {
     const fechaSeleccionada = new Date(this.fechaManual);  // solo fecha
     const ahora = new Date();  // fecha y hora actual
@@ -74,6 +75,7 @@ onSubmit() {
     fechaSeleccionada.setHours(ahora.getHours(), ahora.getMinutes(), ahora.getSeconds());
 
     this.incident.createdAt = fechaSeleccionada;
+    this.incident.openingTime = fechaSeleccionada; // establecer fecha de apertura igual a creación
   }
 
   console.log('Enviando incidente:', this.incident);
